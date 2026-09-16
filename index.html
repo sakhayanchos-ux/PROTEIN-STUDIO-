@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6efe8">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Protein Studio — Мой Wellness</title>
+<style>
+:root{--bg:#f7f1eb;--card:#fff;--text:#2e2b29;--muted:#8a817b;--accent:#6f9b63;--accent2:#e9b7a8;--line:#eadfd7;--gold:#e3b84d}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#fbf7f3,#f3ebe4);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+.app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:84px}.top{padding:22px 18px 10px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;letter-spacing:.3px}.brand small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+.iconbtn{border:0;background:#fff;border:1px solid var(--line);width:42px;height:42px;border-radius:14px;font-size:20px}
+.screen{padding:10px 16px}.hero{background:linear-gradient(135deg,#fff,#f8eee7);border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:0 8px 28px #6d4b3910}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.3px;color:var(--accent);font-weight:800}.hero h1{font-size:28px;line-height:1.1;margin:8px 0}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}.stat b{font-size:24px}.btn{border:0;border-radius:15px;padding:13px 16px;font-weight:800;cursor:pointer}.primary{background:var(--accent);color:white}.soft{background:#f4e8df;color:var(--text)}.gold{color:#8a6812;background:#fff6d8}.progress{height:9px;background:#eee4dd;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}.tabs{position:fixed;bottom:0;left:0;right:0;background:#fffaf7eF;border-top:1px solid var(--line);backdrop-filter:blur(12px);display:flex;justify-content:center;z-index:5}.tabs-inner{max-width:520px;width:100%;display:grid;grid-template-columns:repeat(5,1fr)}.tab{padding:11px 3px 10px;text-align:center;border:0;background:transparent;color:var(--muted);font-size:11px}.tab b{display:block;font-size:19px;margin-bottom:2px}.tab.active{color:var(--accent);font-weight:800}
+input,textarea,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;font:inherit}label{font-size:12px;color:var(--muted);display:block;margin:10px 0 5px}.topic-img{height:170px;border-radius:18px;background:linear-gradient(135deg,#dfe9da,#f7d9ce);display:flex;align-items:center;justify-content:center;color:#65735f;text-align:center;padding:20px;font-weight:800;margin:12px 0}.pill{display:inline-flex;align-items:center;gap:5px;background:#f2e8e0;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700}.list{display:grid;gap:9px;margin-top:10px}.listitem{background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;display:flex;justify-content:space-between;align-items:center}.star{color:#b98212;font-weight:900}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#2e2b29;color:#fff;padding:12px 16px;border-radius:14px;display:none;z-index:10}.hide{display:none}.small{font-size:13px}.section-title{font-size:19px;margin:22px 0 10px}.topic-title{font-size:25px;margin:5px 0 8px}.chat{height:52vh;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:4px}.msg{max-width:82%;background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:16px}.msg.me{align-self:flex-end;background:#eaf2e7}.adminbox{border-left:4px solid var(--accent);padding-left:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand">🌿 Protein Studio<small>Мой Wellness</small></div><button class="iconbtn" onclick="show('profile')">👤</button></header>
+<main id="screen" class="screen"></main>
+<nav class="tabs"><div class="tabs-inner">
+<button class="tab active" data-s="home" onclick="show('home')"><b>🏠</b>Главная</button>
+<button class="tab" data-s="today" onclick="show('today')"><b>📖</b>Сегодня</button>
+<button class="tab" data-s="stars" onclick="show('stars')"><b>⭐</b>Звёзды</button>
+<button class="tab" data-s="chat" onclick="show('chat')"><b>💬</b>Чат</button>
+<button class="tab" data-s="admin" onclick="show('admin')"><b>👩‍💼</b>Админ</button>
+</div></nav>
+<div id="toast" class="toast"></div>
+</div>
+<script>
+const topics=[
+["Правильный рацион в течение всего дня","Питание в течение дня: баланс, режим и небольшие шаги, которые помогают выстроить привычки."],
+["Правильный завтрак","Что важно учитывать в первом приёме пищи и как сделать завтрак удобным для своего режима."],
+["Белки","Зачем организму белок и какие продукты могут быть его источниками."],
+["Углеводы","Разбираемся в источниках углеводов и в том, как выбирать продукты для ежедневного рациона."],
+["Жиры","Почему жиры нужны организму и как разнообразить рацион источниками ненасыщенных жиров."],
+["Питьевой режим","Как сделать воду частью ежедневного режима и не забывать о питье."],
+["Сбалансированный ужин","Как подойти к вечернему приёму пищи и учитывать свой режим сна и активности."],
+["Пищеварение","Что влияет на комфорт пищеварения: питание, вода, движение и регулярность."],
+["Добавляем физическую нагрузку","Как увеличить ежедневную активность небольшими шагами."],
+["Важность перекусов","Когда перекус может быть удобным и как подготовить его заранее."],
+["Настрой на успех","Как поддерживать мотивацию и возвращаться к плану после сложного дня."],
+["План питания и циркадные ритмы","Как режим дня и время приёмов пищи могут быть связаны с повседневными привычками."],
+["Почему не работают диеты?","Почему краткосрочные ограничения бывает сложно удерживать и что помогает формировать привычки."],
+["Конструктор сбалансированного обеда и ужина","Собираем приём пищи из основных групп продуктов."],
+["Обмен веществ в процессе снижения веса","Какие факторы связаны с энергетическим обменом и ежедневным режимом."],
+["Как покупать продукты и еда вне дома","Читаем этикетки и учимся принимать решения в магазине, кафе и ресторане."],
+["Семья и здоровая кулинария","Как вовлечь близких и сделать полезные привычки частью общей жизни."],
+["Добавляем физическую нагрузку","Идеи для движения: ходьба, плавание, велосипед, танцы и другие варианты."],
+["Контроль веса и эффект плато","Почему динамика веса может меняться и какие показатели полезно отслеживать."],
+["Сбалансированное питание для сердца","Какие элементы рациона связаны с заботой о сердечно-сосудистой системе."],
+["Постановка целей и планирование завтрашнего дня","Как превратить желание в конкретную цель и следующий шаг."],
+["Меняем старую рутину на новую!","Как окружение и небольшие изменения помогают закреплять новые привычки."],
+["Очищение","О ежедневной работе организма и привычках, которые поддерживают нормальную работу ЖКТ."],
+["Баланс витаминов, минералов и антиоксидантов","Почему разнообразие рациона важно для получения микроэлементов."],
+["Персонализируем программу питания","Как учитывать цели, режим, предпочтения и индивидуальные особенности."],
+["Добавляем физическую нагрузку","Как встроить движение в обычный день и выбрать подходящий формат активности."],
+["Важность хорошего сна","Как вечерний режим и привычки перед сном влияют на восстановление."],
+["Поддержка иммунной системы","Какие базовые привычки помогают заботиться о нормальной работе иммунной системы."],
+["Внешнее питание","Как поддерживать привычки и заботиться о себе, когда день проходит вне дома."],
+["Как стать помощником Капитана?","Как поддерживать команду, делиться опытом и помогать другим участникам."]
+];
+
+let state=JSON.parse(localStorage.getItem('ps_state')||'null')||{
+name:"Участник",weight:"",startWeight:"",day:1,stars:0,done:[],water:0,steps:0,notifications:false,chat:[
+{name:"Protein Studio",text:"Добро пожаловать! 🌿 Здесь будем поддерживать друг друга.",me:false}
+],admin:false
+};
+function save(){localStorage.setItem('ps_state',JSON.stringify(state))}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
+function setTab(s){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.s===s))}
+function show(s){
+ setTab(s); let el=document.getElementById('screen');
+ if(s==='home') el.innerHTML=home();
+ if(s==='today') el.innerHTML=today();
+ if(s==='stars') el.innerHTML=stars();
+ if(s==='chat') el.innerHTML=chat();
+ if(s==='profile') el.innerHTML=profile();
+ if(s==='admin') el.innerHTML=admin();
+}
+function home(){
+ let pct=Math.min(100,Math.round((state.day-1)/10*100));
+ return `<div class="hero">
+ <div class="kicker">Сегодня • День ${state.day} из 10</div>
+ <h1>Добро пожаловать, ${esc(state.name)}! 🌿</h1>
+ <div class="muted">Текущая тема: <b>${topics[state.day-1][0]}</b></div>
+ <div class="progress"><i style="width:${pct}%"></i></div>
+ <div class="row between"><span class="small">${state.day-1} дней пройдено</span><span class="pill">⭐ ${state.stars}</span></div>
+ <div style="margin-top:14px"><button class="btn primary" onclick="show('today')">Открыть тему дня →</button></div>
+ </div>
+ <div class="grid">
+ <div class="card stat"><span class="muted small">Вес сегодня</span><br><b>${state.weight||"—"}</b> <span class="muted">кг</span><button class="btn soft" style="width:100%;margin-top:10px" onclick="recordWeight()">⚖️ Записать</button></div>
+ <div class="card stat"><span class="muted small">Звёзды</span><br><b>⭐ ${state.stars}</b><div class="muted small" style="margin-top:10px">До награды: ${nextReward()} ⭐</div></div>
+ </div>
+ <h2 class="section-title">✨ Сегодня</h2>
+ <div class="list">
+ <div class="listitem"><span>💧 Вода</span><span>${state.water} стак.</span></div>
+ <div class="listitem"><span>🚶 Шаги</span><span>${state.steps||0}</span></div>
+ <div class="listitem"><span>🔥 Серия</span><span>${state.done.length} дней</span></div>
+ </div>`;
+}
+function today(){
+ let t=topics[state.day-1], done=state.done.includes(state.day);
+ return `<div class="hero">
+ <div class="kicker">ТЕМА ДНЯ • ${state.day}</div>
+ <h1 class="topic-title">${t[0]}</h1>
+ <div class="topic-img">📷<br>Здесь можно разместить разрешённое изображение компании или вашу иллюстрацию</div>
+ <p>${t[1]}</p>
+ <div class="card" style="margin-top:12px"><b>💡 Лайфхак дня</b><p class="small">Подготовь один маленький шаг заранее: поставь воду на видное место, запиши план питания или выбери время для прогулки.</p></div>
+ <div class="card" style="margin-top:12px"><b>🌱 Попробуй сегодня</b><p class="small">Выбери одно действие по теме и отметь его в конце дня.</p></div>
+ <button class="btn ${done?'soft':'primary'}" style="width:100%;margin-top:12px" onclick="completeTopic()">${done?'✅ Тема пройдена':'⭐ Я прошла тему'}</button>
+ </div>
+ <div class="card" style="margin-top:12px"><b>📌 Мои сохранённые лайфхаки</b><p class="muted small">Скоро здесь можно будет сохранять понравившиеся советы.</p></div>`;
+}
+function completeTopic(){
+ if(state.done.includes(state.day)){toast("Эта тема уже отмечена");return}
+ state.done.push(state.day);state.stars+=1;save();toast("⭐ +1 звезда!");
+ if(state.day<10){state.day++;save()} else {toast("🎉 10 дней завершены!");}
+ show('home');
+}
+function recordWeight(){
+ let v=prompt("Вес сегодня, кг:",state.weight||""); if(v===null)return;
+ if(!isFinite(v)||v<=0){toast("Введите корректный вес");return}
+ let first=!state.weight; state.weight=Number(v).toFixed(1); if(first)state.startWeight=state.weight;
+ if(!state.done.includes("weight-"+state.day)){state.stars+=1;state.done.push("weight-"+state.day);toast("⚖️ Вес записан • ⭐ +1")}save();show('home');
+}
+function nextReward(){let levels=[20,35,50,70,100];return levels.find(x=>x>state.stars)||120}
+function stars(){
+ return `<div class="hero"><div class="kicker">МОИ ЗВЁЗДЫ</div><h1>⭐ ${state.stars}</h1><p class="muted">Звёзды начисляются за участие, темы дня и подтверждённые активности.</p>
+ <div class="progress"><i style="width:${Math.min(100,state.stars%100)}%"></i></div></div>
+ <h2 class="section-title">🎁 Награды</h2>
+ <div class="list">${reward(20,"Порционный бонус","🥤")}${reward(35,"Утренний набор","🌅")}${reward(50,"Набор из нескольких порций","🎁")}${reward(70,"Дни в Protein Studio","🏠")}${reward(100,"Специальная награда","🏆")}</div>
+ <h2 class="section-title">🤝 Как заработать ⭐</h2>
+ <div class="card small">⚖️ Записать вес — ⭐<br>📖 Пройти тему — ⭐<br>🏠 Посетить клуб — ⭐⭐<br>🤝 Рекомендация на wellness-оценку — ⭐⭐⭐<br>👤 Гость реально пришёл — ⭐⭐⭐<br>💬 Участие в активности — ⭐⭐</div>`;
+}
+function reward(n,name,ico){let ok=state.stars>=n;return `<div class="listitem"><span>${ico} <b>${name}</b><br><span class="muted small">${n} ⭐</span></span><button class="btn ${ok?'gold':'soft'}" ${ok?'':'disabled'} onclick="redeem('${name}',${n})">${ok?'Обменять':'Ещё '+(n-state.stars)+' ⭐'}</button></div>`}
+function redeem(name,n){if(state.stars<n)return;state.stars-=n;save();toast("🎁 Заявка на награду: "+name);show('stars')}
+function chat(){
+ let msgs=state.chat.map(m=>`<div class="msg ${m.me?'me':''}"><b>${esc(m.name)}</b><div>${esc(m.text)}</div></div>`).join("");
+ return `<div class="hero"><div class="kicker">💬 ОБЩИЙ ЧАТ</div><h1>Protein Studio</h1><p class="muted">Общий чат участников и команды.</p></div>
+ <div class="chat">${msgs}</div>
+ <div class="row" style="margin-top:10px"><input id="chatInput" placeholder="Написать сообщение…"><button class="btn primary" onclick="sendChat()">➤</button></div>`;
+}
+function sendChat(){let x=document.getElementById('chatInput');if(!x.value.trim())return;state.chat.push({name:state.name,text:x.value.trim(),me:true});save();show('chat')}
+function profile(){
+ return `<div class="hero"><div class="kicker">ПРОФИЛЬ</div><h1>${esc(state.name)}</h1>
+ <label>Имя</label><input id="pname" value="${esc(state.name)}">
+ <label>Уведомления</label><button class="btn ${state.notifications?'primary':'soft'}" onclick="toggleNotifications()">${state.notifications?'🔔 Уведомления включены':'🔕 Включить уведомления'}</button>
+ <p class="muted small" style="margin-top:12px">Для push-уведомлений на iPhone сайт нужно добавить на экран «Домой» и разрешить уведомления. В этой бесплатной версии уведомления зависят от поддержки браузера.</p>
+ <button class="btn primary" style="width:100%;margin-top:10px" onclick="saveProfile()">Сохранить профиль</button></div>
+ <h2 class="section-title">📸 Моя трансформация</h2><div class="card"><button class="btn soft" onclick="toast('Фото можно подключить на следующем этапе')">Добавить фото</button><p class="muted small">Старт → промежуточное → финиш.</p></div>`;
+}
+function saveProfile(){state.name=document.getElementById('pname').value||"Участник";save();toast("Профиль сохранён");show('home')}
+function toggleNotifications(){state.notifications=!state.notifications;save(); if(state.notifications && 'Notification' in window) Notification.requestPermission().then(()=>toast("🔔 Настройка уведомлений сохранена")); else toast(state.notifications?"🔔 Включено":"🔕 Выключено");show('profile')}
+function admin(){
+ return `<div class="hero"><div class="kicker">👩‍💼 ПАНЕЛЬ АДМИНА</div><h1>Protein Studio</h1><p class="muted">Демо-панель. В рабочей версии здесь будет база участников и несколько ролей администраторов.</p>
+ <div class="grid"><div class="card stat"><span class="muted small">Участники</span><br><b>—</b></div><div class="card stat"><span class="muted small">Сегодня активны</span><br><b>—</b></div></div></div>
+ <h2 class="section-title">⭐ Подтверждение активностей</h2>
+ <div class="card adminbox"><b>Рекомендация на wellness-оценку</b><p class="muted small">В рабочей версии админ увидит заявку, кто пригласил, дату и сможет подтвердить начисление.</p><button class="btn primary" onclick="toast('В рабочей версии появится очередь заявок')">Открыть заявки</button></div>
+ <h2 class="section-title">📚 Библиотека тем</h2><div class="list">${topics.map((t,i)=>`<div class="listitem"><span><b>${i+1}. ${esc(t[0])}</b><br><span class="muted small">Тема доступна для выбора администратором</span></span><span>${i<10?'🔓':'🔒'}</span></div>`).join("")}</div>`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+show('home');
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}</script></body>
+</html>
