@@ -1,9 +1,0 @@
-{
-  "name": "Protein Studio — Мой Wellness",
-  "short_name": "Protein Studio",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#f7f1eb",
-  "theme_color": "#f6efe8",
-  "lang": "ru"
-}
